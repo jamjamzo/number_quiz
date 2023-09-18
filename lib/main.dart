@@ -1,12 +1,18 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,6 +25,17 @@ class MyApp extends StatelessWidget {
 /// 홈 페이지
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  String quiz = "";
+
+  ///Numbers API 호출하기
+  Future<String> getNumberTrivia() async {
+    //get 메소드로 URL 호출
+    Response result = await Dio().get("http://numbersapi.com/random/trivia");
+    String trivia = result.data; // 응답 결과 가져오기
+    print(trivia);
+    return trivia;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +50,7 @@ class HomePage extends StatelessWidget {
             Expanded(
               child: Center(
                 child: Text(
-                  "퀴즈",
+                  quiz,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 28,
@@ -49,8 +66,10 @@ class HomePage extends StatelessWidget {
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.white),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   // New Quiz 클릭시 퀴즈 가져오기
+                  quiz = await getNumberTrivia();
+                  setState(() {});
                 },
                 child: Text(
                   "New Quiz",
